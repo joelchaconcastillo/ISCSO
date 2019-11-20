@@ -22,7 +22,7 @@ for i = 1:N
 end
 
 
-for gen = 1:1000%(maxeval/N)
+for gen = 1:(maxeval/N)
     for i = 1:N
        %%select tree random indexes...
        idx1 = randi(N);
