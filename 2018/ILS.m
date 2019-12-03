@@ -13,31 +13,57 @@ displacement_penalization = 1000000000;
 
 %%%create a random solution...
 
-best_solution = lower + floor(rand(1,dim).*(upper-lower));
-[f_best, w_best, s_best, d_best ] = fitness(best_solution, stress_penalization, displacement_penalization, NSizing_variables, NShape_variables);
+best_solution_global = lower + floor(rand(1,dim).*(upper-lower));
+[f_best_global, w_best_global, s_best_global, d_best_global ] = fitness(best_solution_global, stress_penalization, displacement_penalization, NSizing_variables, NShape_variables);
+
+best_local = best_solution_global;
+f_best_local = f_best_global;
+w_best_local = w_best_global;
+s_best_local = s_best_global;
+d_best_local = d_best_global;
+
 feval = 1;
+maxIteNoUpdate = 10000;
+cont = 0;
 %H_fwsd = zeros(maxeval, 4)
 while feval < maxeval
-   current = best_solution;
+   current = best_local;
    %%%take one variable randomly
    idx = randi([1,dim]);
    %%%mutate variable
    current(idx) = randi([lower(idx), upper(idx)]);
    [f_current, w, s, d ] = fitness(current, stress_penalization, displacement_penalization, NSizing_variables, NShape_variables);
-
-   if f_current < f_best
-      best_solution = current;
-      f_best = f_current;
-      w_best = w;
-      s_best = s;
-      d_best = d;
+   if f_current < f_best_local
+      best_local = current;
+      f_best_local = f_current;
+      w_best_local = w;
+      s_best_local = s;
+      d_best_local = d;
+      cont = 0;
+   else
+     cont = cont+1;
+      if cont > maxIteNoUpdate
+	rr = [best_local, best_solution_global];
+        save('ILS_history_local_best', 'rr', '-ascii', '-append');
+        best_local= lower + floor(rand(1,dim).*(upper-lower));
+        [f_best_local, w_best_local, s_best_local, d_best_local ] = fitness(best_local, stress_penalization, displacement_penalization, NSizing_variables, NShape_variables);
+	feval = feval +1;
+	cont = 0;
+      end
    end
-%   H_fwsd(feval, 1) = f_best;
-%   H_fwsd(feval, 2) = w_best;
-%   H_fwsd(feval, 3) = s_best;
-%   H_fwsd(feval, 4) = d_best;
-   row_v = [feval, f_best, w_best, s_best, d_best];
-   save('ILS_history', 'row_v', '-ascii', '-append');
+   
+
+   if f_best_local < f_best_global
+      best_solution_global = best_local;
+      f_best_global = f_best_local;
+      w_best_global = w_best_local;
+      s_best_global = s_best_local;
+      d_best_global = d_best_local;
+   end
+      if mod(feval, 10)==0
+    row_v = [feval, f_best_global, w_best_global, s_best_global, d_best_global, f_best_local, w_best_local, s_best_local, d_best_local];
+    save('ILS_history', 'row_v', '-ascii', '-append');
+   end
    feval = feval+1;
 end
 

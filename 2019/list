@@ -1,0 +1,67 @@
+experiment_1 
+stochastic hill-climbing, mutating one variable off 20'000...
+experiment_2
+stochastic hill-climbing, mutating two variables, off 20'000...
+experiment_3
+stochastic hill-climbing, mutating three variables, of 20'000...
+experiment_4
+stochastic hill-climbing, cascade, of 20'000...
+
+
+experiment_5
+stochastic hill-climbing, mutating one variable off 1000...
+experiment_6
+stochastic hill-climbing, mutating two variables, off 1000...
+experiment_7
+stochastic hill-climbing, mutating three variables, of 1000...
+experiment_8
+stochastic hill-climbing, cascade, of 1000...
+
+experiment_9
+stochastic hill-climbing, mutating one variable off 1000 and best-variable selection...
+
+experiment_10
+stochastic hill-climbing, mutating one variable off 1000 and best-variable selection in window 5...
+
+experiment_11
+stochastic hill-climbing, mutating between 1 to 5 variables randomly, of 1000...
+
+experiment_12
+memetic
+
+experimen_13
+learning rate mutation..
+
+experiment_14
+same values by random-subset
+
+experiment_15
+as 7 with infity nfes
+
+
+experiment_16
+eda
+
+experiment_17
+iterated given order
+
+experiment_18
+neighbours redefinition..
+
+experiment_19
+branch-space
+
+experiment_20
+small perturbation, one variable mutation
+
+experiment_21
+starting from feasible point
+
+experiment_22
+infinity with one variable
+
+experiment_23
+infinity with one-three random variables..
+
+experiment_24
+cascade of 100
