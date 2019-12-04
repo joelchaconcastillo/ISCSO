@@ -10,20 +10,24 @@ maxeval = 200000;
 dim = NSizing_variables + NShape_variables;
 stress_penalization = 1000000000;
 displacement_penalization = 1000000000;
-N = 10; %%population size...
-maxiteLS = 50;
+N = 100; %%population size...
+maxiteLS = 1;
 population = zeros(N, dim);
 fitness_parent = zeros(N, 4);
 children= zeros(N, dim);
 fitness_children= zeros(N, 4);
-
+perm = randperm(dim);
 %%%Initialization
 for i =1:N
-   parent(i,:) = lower + floor(rand(1,dim).*(upper-lower));
+%   for d =1:dim
+%      parent(i,perm(d)) = randi([lower(perm(d)), upper(perm(d))]);%
+%      
+%   end
+      parent(i,:) =lower + floor(rand(1,dim).*(upper-lower));
    fitness_parent(i,:) = fitness(parent(i,:), stress_penalization, displacement_penalization, NSizing_variables, NShape_variables);
-   fitness_parent(i,:)
-   [parent(i,:), fitness_parent(i,:)] = ILS(parent(i,:), fitness_parent(i,:), NSizing_variables, NShape_variables, lower, upper, Flag, maxiteLS, maxiteLS, dim, stress_penalization, displacement_penalization);
-   fitness_parent(i,:)
+ %  fitness_parent(i,:)
+%   [parent(i,:), fitness_parent(i,:)] = ILS(parent(i,:), fitness_parent(i,:), NSizing_variables, NShape_variables, lower, upper, Flag, maxiteLS, maxiteLS, dim, stress_penalization, displacement_penalization);
+  % fitness_parent(i,:)
 end
 
 best_solution = parent(1,:);
@@ -53,24 +57,43 @@ for g =1:(maxeval/(N*maxiteLS))
 	   p2 = idx2;
    end
    %%crossover..
-   %%one-point crossover
-   idx_cut = randi([1, dim]);
-   for d =1:dim
-      if d < idx_cut
-        children(i, d) = parent(p1, d);
-      else
-        children(i, d) = parent(p2, d);
-      end
-   end
+   if rand() < 0.9
+        %%one-point crossover
+        idx_cut = randi([1, dim]);
+        for l =1:dim
+           d = perm(l);
+           if l < idx_cut
+             children(i, d) = parent(p1, d);
+           else
+             children(i, d) = parent(p2, d);
+           end
+        end
+   %%%%uniform -crossover
+%        for d =1:dim
+%           if rand() < 0.5
+%             children(i, d) = parent(p1, d);
+%           else
+%             children(i, d) = parent(p2, d);
+%           end
+%        end
+   else
+	   if rand() < 0.5
+		   children(i,:) = parent(p1,:);
+	   else
+		   children(i,:) = parent(p2,:);
+	   end
+%%%%%%%%%%%%%%%%%%my crossover...
+   end %%end-if
+
    %%%mutation
-   idx = randi([1,dim]);
+   idx = perm(randi([1,dim]));
    children(i, idx) = randi([lower(idx), upper(idx)]);
    fitness_children(i,:) = fitness(children(i,:), stress_penalization, displacement_penalization, NSizing_variables, NShape_variables);
-   fitness_children(i,:)
-   [children(i,:), fitness_children(i,:)] = ILS(children(i,:), fitness_children(i,:), NSizing_variables, NShape_variables, lower, upper, Flag, maxiteLS, maxiteLS, dim, stress_penalization, displacement_penalization);
+  % fitness_children(i,:)
+  % [children(i,:), fitness_children(i,:)] = ILS(children(i,:), fitness_children(i,:), NSizing_variables, NShape_variables, lower, upper, Flag, maxiteLS, maxiteLS, dim, stress_penalization, displacement_penalization);
 
-   fitness_children(i,:)
-   %fitness_children(i,:)
+%   fitness_children(i,:)
+%   %fitness_children(i,:)
  end %%end population
  %%elitism...
  for i=1:N

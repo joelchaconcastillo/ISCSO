@@ -23,7 +23,7 @@ s_best_local = s_best_global;
 d_best_local = d_best_global;
 
 feval = 1;
-maxIteNoUpdate = 20000;
+maxIteNoUpdate = 500;
 cont = 0;
 %H_fwsd = zeros(maxeval, 4)
 while feval < maxeval
@@ -31,7 +31,7 @@ while feval < maxeval
    %%%take one variable randomly
    idx = randi([1,dim]);
    %%%mutate variable
-   current(idx) = randi([lower(idx), upper(idx)]);
+   current(idx) =randi([lower(idx), upper(idx)]);% randi([max(lower(idx), current(idx)-5), min(upper(idx),current(idx)+5)]);
    [f_current, w, s, d ] = fitness(current, stress_penalization, displacement_penalization, NSizing_variables, NShape_variables);
    if f_current < f_best_local
       best_local = current;
@@ -45,7 +45,8 @@ while feval < maxeval
       if cont > maxIteNoUpdate
 	rr = [best_local, best_solution_global];
         save('ILS_history_local_best', 'rr', '-ascii', '-append');
-        best_local= lower + floor(rand(1,dim).*(upper-lower));
+%        best_local= lower + floor(rand(1,dim).*(upper-lower));
+   	best_local(idx) = randi([max(lower(idx), best_local(idx)-5), min(upper(idx),best_local(idx)+5)]);
         [f_best_local, w_best_local, s_best_local, d_best_local ] = fitness(best_local, stress_penalization, displacement_penalization, NSizing_variables, NShape_variables);
 	feval = feval +1;
 	cont = 0;

@@ -23,11 +23,16 @@ s_best_local = s_best_global;
 d_best_local = d_best_global;
 
 feval = 1;
-maxIteNoUpdate = 1000;
+maxIteNoUpdate = 100;
 cont = 0;
 check = false;
 %H_fwsd = zeros(maxeval, 4)
 	      disp('pp');
+prev = f_best_local;
+prev_value = best_local;
+
+hi = sparse(15000, dim);
+
 while feval < maxeval
    current = best_local;
    %%%take one variable randomly
@@ -35,7 +40,15 @@ while feval < maxeval
    %%%mutate variable
    current(idx) = randi([lower(idx), upper(idx)]);
    [f_current, w, s, d ] = fitness(current, stress_penalization, displacement_penalization, NSizing_variables, NShape_variables);
+
+
    if f_current < f_best_local
+      hi(floor(f_current),:) = current;
+      if prev-f_current > 10000
+	   prev = f_current;
+	   prev_value = current;
+      end
+
       best_local = current;
       f_best_local = f_current;
       w_best_local = w;
@@ -54,7 +67,7 @@ while feval < maxeval
 	rr = [best_local, best_solution_global];
         save('ILS_history_local_best', 'rr', '-ascii', '-append');
        % best_local= lower + floor(rand(1,dim).*(upper-lower));
-       best_local = feasible_solution;
+       best_local = hi(floor(f_best_global)-10000, :);%prev_value;
         [f_best_local, w_best_local, s_best_local, d_best_local ] = fitness(best_local, stress_penalization, displacement_penalization, NSizing_variables, NShape_variables);
 	feval = feval +1;
 	cont = 0;
@@ -71,7 +84,7 @@ while feval < maxeval
    end
       if mod(feval, 10)==0
     row_v = [feval, f_best_global, w_best_global, s_best_global, d_best_global, f_best_local, w_best_local, s_best_local, d_best_local];
-    save('ILS_history_2', 'row_v', '-ascii', '-append');
+    save('ILS_history_6', 'row_v', '-ascii', '-append');
    end
    feval = feval+1;
 end
