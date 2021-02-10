@@ -11,7 +11,7 @@ dim = NSizing_variables + NShape_variables;
 stress_penalization = 1000000000;
 displacement_penalization = 1000000000;
 N = 100; %%population size...
-maxiteLS = 1;
+maxiteLS = 100000;
 population = zeros(N, dim);
 fitness_parent = zeros(N, 4);
 children= zeros(N, dim);
@@ -25,8 +25,8 @@ for i =1:N
 %   end
       parent(i,:) =lower + floor(rand(1,dim).*(upper-lower));
    fitness_parent(i,:) = fitness(parent(i,:), stress_penalization, displacement_penalization, NSizing_variables, NShape_variables);
- %  fitness_parent(i,:)
-%   [parent(i,:), fitness_parent(i,:)] = ILS(parent(i,:), fitness_parent(i,:), NSizing_variables, NShape_variables, lower, upper, Flag, maxiteLS, maxiteLS, dim, stress_penalization, displacement_penalization);
+  fitness_parent(i,:)
+   [parent(i,:), fitness_parent(i,:)] = ILS(parent(i,:), fitness_parent(i,:), NSizing_variables, NShape_variables, lower, upper, Flag, maxiteLS, maxiteLS, dim, stress_penalization, displacement_penalization);
   % fitness_parent(i,:)
 end
 
@@ -36,7 +36,7 @@ f_best_solution = fitness_parent(1,:);
 
 %%%start loop
 maxeval/(N*maxiteLS)
-for g =1:(maxeval/(N*maxiteLS))
+for g =1:100000 %(maxeval/(N*maxiteLS))
 	g
  for i =1:N
    p1 = 0;
@@ -90,7 +90,7 @@ for g =1:(maxeval/(N*maxiteLS))
    children(i, idx) = randi([lower(idx), upper(idx)]);
    fitness_children(i,:) = fitness(children(i,:), stress_penalization, displacement_penalization, NSizing_variables, NShape_variables);
   % fitness_children(i,:)
-  % [children(i,:), fitness_children(i,:)] = ILS(children(i,:), fitness_children(i,:), NSizing_variables, NShape_variables, lower, upper, Flag, maxiteLS, maxiteLS, dim, stress_penalization, displacement_penalization);
+   [children(i,:), fitness_children(i,:)] = ILS(children(i,:), fitness_children(i,:), NSizing_variables, NShape_variables, lower, upper, Flag, maxiteLS, maxiteLS, dim, stress_penalization, displacement_penalization);
 
 %   fitness_children(i,:)
 %   %fitness_children(i,:)
@@ -112,6 +112,7 @@ for g =1:(maxeval/(N*maxiteLS))
  parent(1,:) = best_solution;
  fitness_parent(1,:) = f_best_solution;
  save('GA_history', 'f_best_solution', '-ascii', '-append');
+ save('Sol', 'best_solution', '-ascii', '-append');
  %%
 end %%end generaitons..
 
