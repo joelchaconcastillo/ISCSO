@@ -1,18 +1,5 @@
-seed = 1
+function ILS(NeighbourSize, file, seed)
 rand('seed', seed)
-%import Solution
-%NSizing_variables = 345;
-%lower = [ ones(1,NSizing_variables)];
-%upper = [ 37*ones(1,NSizing_variables)];
-%Flag = 0;
-%maxeval = 200000;
-%
-%dim = NSizing_variables
-%stress_penalization = 1;
-%displacement_penalization = 1;
-%
-%exit;
-
 %%%%%%Are variables monotonically increasing?...
 %
 %trialSolution= lower + floor(rand(1,dim).*(upper-lower));
@@ -40,11 +27,14 @@ rand('seed', seed)
 feval = 1;
 maxeval = 200000;
 gBest = Solution;
+gBest.file=file;
+gBest.maxeval=maxeval;
+gBest.NeighbourSize=NeighbourSize;
 gBest = gBest.restart();
 while feval<maxeval
   trial = gBest;
   trial = trial.partialRestart();
-  [trial, feval] = SHC(trial, maxeval, feval);
+  [trial, feval] = SHC(trial, feval);
    %disp([trial.StressV, gBest.StressV])
   if trial.isBest(gBest)
      gBest = trial;
@@ -107,3 +97,4 @@ end
 %end
 %name = strcat('Solution_', num2str(seed));;
 %save(name, 'best_solution_global', '-ascii', '-append');
+end

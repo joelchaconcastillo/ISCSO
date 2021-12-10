@@ -7,6 +7,9 @@ classdef Solution
    opt=37;
    lower= ones(1,345);
    upper=37*ones(1,345);
+   NeighbourSize=1;
+   file;
+   maxeval=200000;
   end
   methods
      function res=restart(obj) %% I miss passing by reference!!! :'(
